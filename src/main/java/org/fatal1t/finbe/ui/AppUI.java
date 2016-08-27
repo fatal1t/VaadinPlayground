@@ -5,6 +5,11 @@
  */
 package org.fatal1t.finbe.ui;
 
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import org.fatal1t.finbe.ui.views.RegistrationView;
+import org.fatal1t.finbe.ui.views.SimpleLoginView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
@@ -12,6 +17,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -22,6 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AppUI extends UI {
     @Autowired
     private SpringViewProvider viewProvider;
+    private EventBus eventBus;
+    
+    @PostConstruct
+    private void registerToEventBus()
+    {
+        eventBus = new EventBus("main");
+    }
+    
+    
+    
      @Override
     protected void init(VaadinRequest request) {
 
@@ -41,10 +57,11 @@ public class AppUI extends UI {
             public boolean beforeViewChange(ViewChangeEvent event) {
 
                 // Check if a user has logged in
-                boolean isLoggedIn = getSession().getAttribute("user") != null;
+                boolean isLoggedIn = getSession().getAttribute("token") != null;
                 boolean isLoginView = event.getNewView() instanceof SimpleLoginView;
+                boolean isRegistrationView = event.getNewView() instanceof RegistrationView;
 
-                if (!isLoggedIn && !isLoginView) {  
+                if (!isLoggedIn && !isLoginView && !isRegistrationView) {  
                     // Redirect to login view always if a user has not yet
                     // logged in
                     getNavigator().navigateTo(SimpleLoginView.NAME);
@@ -54,6 +71,11 @@ public class AppUI extends UI {
                     // If someone tries to access to login view while logged in,
                     // then cancel
                     return false;
+                }
+                else if(!isLoggedIn && isRegistrationView)
+                {
+                    // Access to registration
+                    return true;
                 }
 
                 return true;
@@ -65,6 +87,16 @@ public class AppUI extends UI {
             }
         });
         getNavigator().navigateTo(SimpleLoginView.NAME);
+    }
+    
+    @Subscribe
+    private void onChange()
+    {
+        
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
     
 }

@@ -3,27 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fatal1t.finbe.ui;
+package org.fatal1t.finbe.ui.views;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.validator.AbstractValidator;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
-import com.vaadin.ui.themes.ValoTheme;
 import org.fatal1t.finbe.services.AuthenticationService;
 import org.fatal1t.finbe.services.loginservice.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringView(name = SimpleLoginView.NAME)
 @UIScope
 @Theme("Valo")
-public class SimpleLoginView extends CustomComponent implements View, Button.ClickListener {
+public class SimpleLoginView extends CustomComponent implements View {
 
     public static final String NAME = "login";
 
@@ -45,13 +42,19 @@ public class SimpleLoginView extends CustomComponent implements View, Button.Cli
 
     private final PasswordField password;
     
-
+    private final HorizontalLayout buttons;
     private final Button loginButton;
+    private final Button registerButton;
     @Autowired
     public SimpleLoginView(LoginService service, AuthenticationService authenticationService1) {
         setSizeFull();
+
+        this.loginService = service;
         this.authenticationService = authenticationService1;
-        loginButton = new Button("Login", this);
+        // Create login & registration button and add them to separate component
+        loginButton = new Button("Login");       
+        registerButton = new Button("Register");
+        buttons = new HorizontalLayout(loginButton, registerButton);
         // Create the user input field
         user = new TextField("User:");
         user.setWidth("300px");
@@ -69,16 +72,21 @@ public class SimpleLoginView extends CustomComponent implements View, Button.Cli
         password.setRequired(true);
         password.setValue("123456");
         password.setNullRepresentation("");
+        
+        //add listeners and shortcuts
+        this.loginButton.addClickListener(e -> this.loginButtonClick(e));
         this.loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-
-        // Create login button
-
+        this.registerButton.addClickListener( e -> {
+            System.out.println("Pozadavek na registraci");
+            this.getUI().getNavigator().navigateTo(RegistrationView.NAME);
+            
+        });
 
         // Add both to a panel
-        VerticalLayout fields = new VerticalLayout(user, password, loginButton);
+        VerticalLayout fields = new VerticalLayout(user, password, buttons);
         fields.setCaption("Please login to access the application. (test@test.com/passw0rd)");
         fields.setSpacing(true);
-        fields.setMargin(new MarginInfo(true, true, true, false));
+        fields.setMargin(new MarginInfo(true, true, true, true));
         fields.setSizeUndefined();
 
         // The view root layout
@@ -87,7 +95,7 @@ public class SimpleLoginView extends CustomComponent implements View, Button.Cli
         viewLayout.setComponentAlignment(fields, Alignment.MIDDLE_CENTER);
         
         setCompositionRoot(viewLayout);
-        this.loginService = service;
+
     }
 
     @Override
@@ -123,8 +131,8 @@ public class SimpleLoginView extends CustomComponent implements View, Button.Cli
         }
     }
 
-    @Override
-    public void buttonClick(ClickEvent event) {
+    
+    public void loginButtonClick(ClickEvent event) {
 
         //
         // Validate the fields using the navigator. By using validors for the

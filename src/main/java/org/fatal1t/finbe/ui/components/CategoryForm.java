@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fatal1t.finbe.ui;
+package org.fatal1t.finbe.ui.components;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.spring.annotation.SpringComponent;

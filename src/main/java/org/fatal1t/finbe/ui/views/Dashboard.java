@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fatal1t.finbe.ui;
+package org.fatal1t.finbe.ui.views;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
@@ -22,6 +22,8 @@ import org.fatal1t.finbe.controllers.entities.CategoryRepository;
 import org.fatal1t.finbe.services.AuthenticationService;
 import org.fatal1t.finbe.services.ItemsService;
 import org.fatal1t.finbe.services.entities.UserItem;
+import org.fatal1t.finbe.ui.components.CategoryForm;
+import org.fatal1t.finbe.ui.components.ItemForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
