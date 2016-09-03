@@ -6,18 +6,16 @@
 package org.fatal1t.finbe.ui;
 
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.annotations.PreserveOnRefresh;
 import org.fatal1t.finbe.ui.views.RegistrationView;
 import org.fatal1t.finbe.ui.views.SimpleLoginView;
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -25,16 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author fatal1t
  */
 @SpringUI
+@PreserveOnRefresh
 public class AppUI extends UI {
     @Autowired
     private SpringViewProvider viewProvider;
-    private EventBus eventBus;
-    
-    @PostConstruct
-    private void registerToEventBus()
-    {
-        eventBus = new EventBus("main");
-    }
     
     
     
@@ -93,10 +85,6 @@ public class AppUI extends UI {
     private void onChange()
     {
         
-    }
-
-    public EventBus getEventBus() {
-        return eventBus;
     }
     
 }

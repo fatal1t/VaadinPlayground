@@ -160,7 +160,7 @@ public class SimpleLoginView extends CustomComponent implements View {
             getSession().setAttribute("token", token); 
             getSession().setAttribute("userId",  this.authenticationService.checkUserToken(token));
             // Navigate to main view
-            getUI().getNavigator().navigateTo(Dashboard.NAME);//
+            getUI().getNavigator().navigateTo(Dashboard.NAME);
 
         } else {
 

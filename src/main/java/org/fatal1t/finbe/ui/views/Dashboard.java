@@ -24,6 +24,7 @@ import org.fatal1t.finbe.services.ItemsService;
 import org.fatal1t.finbe.services.entities.UserItem;
 import org.fatal1t.finbe.ui.components.CategoryForm;
 import org.fatal1t.finbe.ui.components.ItemForm;
+import org.fatal1t.finbe.ui.components.Menu;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -47,42 +48,45 @@ public class Dashboard extends CustomComponent implements View {
     private final HorizontalLayout itemLayout;
     private final HorizontalLayout categoryLayout;
     private final VerticalLayout mainLayout;
+    private final Menu menu;
     private Long userId;
     
     
     @Autowired
-    public Dashboard(ItemsService service, ItemForm form, CategoryRepository repo, AuthenticationService authService, CategoryForm catForm) {
+    public Dashboard(ItemsService service, ItemForm form, CategoryRepository repo, AuthenticationService authService, CategoryForm catForm, Menu menu) {
         // autowired dependecies
         this.categoryRepository = repo;
         this.itemForm = form;        
         this.authenticationService = authService;
         this.catForm = catForm;
-        
-        
+        this.menu = menu; 
+       
         this.itemGrid = new Grid();
         this.categoryGrid = new Grid();
         this.itemLayout = new HorizontalLayout(this.itemGrid, this.itemForm);
         this.categoryLayout = new HorizontalLayout(this.categoryGrid, this.catForm);
         itemLayout.setMargin(true);
         itemLayout.setSpacing(true);    
-        itemGrid.setHeight(300, Unit.PIXELS);
-        itemGrid.setWidth(300, Unit.PIXELS);
-        itemGrid.setColumns("id", "itemName", "itemPrice");
-        categoryGrid.setColumns("id", "catName");
+        itemGrid.setHeight(500, Unit.PIXELS);
+        itemGrid.setWidth(500, Unit.PIXELS);
+        itemGrid.setColumns("itemName", "itemPrice");
+        categoryGrid.setColumns("catName");
         categoryGrid.setHeight(100, Unit.PIXELS);
         categoryGrid.setWidth(300, Unit.PIXELS);
         categoryLayout.setMargin(true);
         categoryLayout.setSpacing(true);
         
         //categoryGrid.setVisible(false);
-        this.mainLayout = new VerticalLayout(itemLayout, categoryLayout);
+        this.mainLayout = new VerticalLayout(this.menu, itemLayout, categoryLayout );
+        
         mainLayout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
         mainLayout.setComponentAlignment(categoryLayout, Alignment.MIDDLE_CENTER);
+        mainLayout.setComponentAlignment(menu, Alignment.TOP_CENTER);
         
         setCompositionRoot(mainLayout);
         this.service = service;
         itemGrid.addSelectionListener(e -> form.setItem((UserItem) itemGrid.getSelectedRow()));
-    }
+    }   
         
     public void setItems()
     {
