@@ -150,17 +150,19 @@ public class SimpleLoginView extends CustomComponent implements View {
         // Validate username and password with database here. For examples sake
         // I use a dummy username and password.
         //
-        boolean isValid = username.equals("test@test.com")
-                && password.equals("passw0rd");
+        //boolean isValid = username.equals("test@test.com")
+        //        && password.equals("passw0rd");
         String token = this.loginService.login(username, password);
         if (token != null) {
 
             // Store the current user in the service session
             getSession().setAttribute("user", username);
             getSession().setAttribute("token", token); 
+
             getSession().setAttribute("userId",  this.authenticationService.checkUserToken(token));
+            System.out.println("Logged user " + username + " and user id " + getSession().getAttribute("userId") );
             // Navigate to main view
-            getUI().getNavigator().navigateTo(Dashboard.NAME);
+            getUI().getNavigator().navigateTo(DashboardView.NAME);
 
         } else {
 

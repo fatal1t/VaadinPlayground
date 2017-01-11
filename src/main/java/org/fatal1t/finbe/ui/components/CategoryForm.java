@@ -15,6 +15,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import org.fatal1t.finbe.controllers.entities.Category;
 import org.fatal1t.finbe.controllers.entities.CategoryRepository;
+import org.fatal1t.finbe.ui.views.CustomView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -32,7 +33,8 @@ public class CategoryForm extends FormLayout {
     private final Button delete = new Button("Delete");
     private final Button newCat = new Button("New");
     private final HorizontalLayout buttons;
-    private Long userId;
+    //private Long userId;
+    private CustomView view;
     
     @Autowired
     public CategoryForm(CategoryRepository repository)
@@ -41,14 +43,21 @@ public class CategoryForm extends FormLayout {
         this.errorLabel.setVisible(false);
         this.buttons = new HorizontalLayout(this.save, this.delete, this.newCat);
         this.addComponents(this.catName, this.errorLabel, this.buttons);
+        this.newCat.addClickListener(e -> {
+            setCategory(new Category());
+            view.setItems();
+        });
+        
         this.save.addClickListener(e -> {
             repository.save(this.category);
+            view.setItems();
         });
         
         this.delete.addClickListener(e -> {
             try
             {
                 this.repository.delete(this.category.getId());
+                view.setItems();
             }
             catch(Exception ex)
             {
@@ -56,15 +65,32 @@ public class CategoryForm extends FormLayout {
                 this.errorLabel.setValue("Neco se posralo, zkus predelat kategorie");
             }
         });
-        
+        this.category = new Category();
     }
     
     public void setCategory(Category category)
     {
         /// pridat kontrolu na persistenci 
-        userId = (Long) getSession().getAttribute("userId");
-        BeanFieldGroup.bindFieldsUnbuffered(category, this);
-        this.category = category;
+        Long userId = (Long) getSession().getAttribute("userId");
+        if(category == null)
+        {
+            return;
+        }
+        boolean isPersited = this.repository.findById(category.getId()) != null;
+        if(isPersited)
+        {
+            System.out.println("Item is found");
+            this.category = this.repository.findById(category.getId());
+        }
+        else     
+        {
+            category.setIdUser(userId);
+            this.category = category;
+        }
+        BeanFieldGroup.bindFieldsUnbuffered(this.category, this);
     }
-    
+    public void setView(CustomView view)
+    {
+        this.view = view;
+    }
 }

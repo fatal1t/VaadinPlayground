@@ -11,7 +11,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import org.fatal1t.finbe.ui.views.Dashboard;
+import org.fatal1t.finbe.ui.views.DashboardView;
 import org.fatal1t.finbe.ui.views.ItemsView;
 
 /**
@@ -34,7 +34,7 @@ public class Menu extends VerticalLayout {
         MenuBar.Command dashboardCommand = new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                getUI().getNavigator().navigateTo(Dashboard.NAME);
+                getUI().getNavigator().navigateTo(DashboardView.NAME);
             }
         };
         

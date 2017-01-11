@@ -72,5 +72,6 @@ public class RegistrationView extends CustomComponent implements View {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         this.username.focus();        
     }
+
     
 }

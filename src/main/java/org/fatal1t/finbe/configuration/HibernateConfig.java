@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fatal1t.forexapp.spring.config;
+package org.fatal1t.finbe.configuration;
 
 import javax.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;

@@ -7,6 +7,7 @@ package org.fatal1t.finbe.controllers.entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,7 +43,7 @@ public class Category implements Serializable {
     private String catName;
     
     @Column(name = "create_date")
-    private Timestamp create_date;
+    private Timestamp createDate;
     
     
     public Long getId() {
@@ -69,15 +70,18 @@ public class Category implements Serializable {
         this.catName = catName;
     }
 
-    public Timestamp getCreate_date() {
-        return create_date;
+    public Timestamp getCreateDate() {
+        return createDate;
     }
 
-    public void setCreate_date(Timestamp create_date) {
-        this.create_date = create_date;
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
     }
-    
-    
+    public Category()
+    {
+        this.catName = "";
+        this.createDate = Timestamp.from(Instant.now());
+    }
     
 }
 

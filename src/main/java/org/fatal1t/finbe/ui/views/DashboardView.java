@@ -31,17 +31,17 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author fatal1t
  */
-@SpringView(name = Dashboard.NAME)
+@SpringView(name = DashboardView.NAME)
 @UIScope
 @Theme("Valo")
-public class Dashboard extends CustomComponent implements View {
+public class DashboardView extends CustomComponent implements CustomView {
 
     public final static String NAME = "Dashboard";
     private final ItemsService service;
     private final CategoryRepository categoryRepository;
-    private final AuthenticationService authenticationService;
-    private final ItemForm itemForm;
-    private final CategoryForm catForm;
+
+    //private final ItemForm itemForm;
+    //private final CategoryForm catForm;
     
     private final Grid itemGrid;
     private final Grid categoryGrid;
@@ -53,18 +53,18 @@ public class Dashboard extends CustomComponent implements View {
     
     
     @Autowired
-    public Dashboard(ItemsService service, ItemForm form, CategoryRepository repo, AuthenticationService authService, CategoryForm catForm, Menu menu) {
+    public DashboardView(ItemsService service, CategoryRepository repo, Menu menu) {
         // autowired dependecies
         this.categoryRepository = repo;
-        this.itemForm = form;        
-        this.authenticationService = authService;
-        this.catForm = catForm;
+        //this.itemForm = form;        
+       
+        //this.catForm = catForm;
         this.menu = menu; 
        
         this.itemGrid = new Grid();
         this.categoryGrid = new Grid();
-        this.itemLayout = new HorizontalLayout(this.itemGrid, this.itemForm);
-        this.categoryLayout = new HorizontalLayout(this.categoryGrid, this.catForm);
+        this.itemLayout = new HorizontalLayout(this.itemGrid);
+        this.categoryLayout = new HorizontalLayout(this.categoryGrid);
         itemLayout.setMargin(true);
         itemLayout.setSpacing(true);    
         itemGrid.setHeight(500, Unit.PIXELS);
@@ -85,7 +85,7 @@ public class Dashboard extends CustomComponent implements View {
         
         setCompositionRoot(mainLayout);
         this.service = service;
-        itemGrid.addSelectionListener(e -> form.setItem((UserItem) itemGrid.getSelectedRow()));
+
     }   
         
     public void setItems()
@@ -97,13 +97,13 @@ public class Dashboard extends CustomComponent implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        this.itemForm.setDashboard(this);        
+        //this.itemForm.setDashboard(this);        
         String username = String.valueOf(getSession().getAttribute("user"));
         String token = String.valueOf(getSession().getAttribute("token"));
         System.out.println("loggeg user "+ getSession().getAttribute("userId")+" with token " +token);
         this.userId = (Long) getSession().getAttribute("userId");
         setItems();
-        this.itemForm.setItem(new UserItem());
+        //this.itemForm.setItem(new UserItem());
     }
     
 }

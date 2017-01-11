@@ -5,9 +5,10 @@
  */
 package org.fatal1t.finbe.ui.components;
 
-import org.fatal1t.finbe.ui.views.Dashboard;
+import org.fatal1t.finbe.ui.views.DashboardView;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -18,9 +19,12 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
+import javax.annotation.PostConstruct;
+import org.fatal1t.finbe.controllers.entities.CategoryRepository;
 import org.fatal1t.finbe.controllers.entities.CurrencyRepository;
 import org.fatal1t.finbe.services.ItemsService;
 import org.fatal1t.finbe.services.entities.UserItem;
+import org.fatal1t.finbe.ui.views.CustomView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -33,6 +37,7 @@ public class ItemForm extends FormLayout {
     
     private final ItemsService itemService;
     private final CurrencyRepository currRepository;
+    private final CategoryRepository categoryRepository;
     private UserItem item;
     private final TextField itemName = new TextField("Item Name");
     private final TextField itemPrice = new TextField("Item Price");
@@ -41,25 +46,25 @@ public class ItemForm extends FormLayout {
     private final CheckBox isNeeded = new CheckBox("Is needed");
     private final TextField itemDesc = new TextField("Item Description");
     private final DateField purDate = new DateField("Purchase date");
-    private final TextField category = new TextField("Category");
+    private final ComboBox category = new ComboBox("Category");
     private final Button save = new Button("Save");
     private final Button newItem = new Button("New");
     private final Button delete = new Button("Delete");
-    private final Button newCategory = new Button("New Category");
+    
     private final HorizontalLayout buttons;
-    private Dashboard dashboard;
+    private CustomView baseView;
     private Long userId;
     
     @Autowired
-    public ItemForm(ItemsService service, CurrencyRepository currencyRepository)
+    public ItemForm(ItemsService service, CurrencyRepository currencyRepository, CategoryRepository categoryRepository1)
     {
         this.buttons = new HorizontalLayout(save, newItem, delete);
         this.currRepository = currencyRepository;
+        this.categoryRepository = categoryRepository1;
         this.currRepository.findAll().forEach( curr -> {
             this.currency.addItem(curr.getIsoCode());                   
         }
         );
-        this.category.setValue("default");
         this.purDate.setDateFormat("dd-MM-yyyy");
         this.itemService = service;
         
@@ -67,26 +72,27 @@ public class ItemForm extends FormLayout {
         addComponents(itemName, itemPrice, currency, category, itemLink, isNeeded, itemDesc, purDate, buttons); 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.addClickListener(e -> {
-            System.err.println("Neco se ulozilo " + item.getItemName());
+            System.out.println("Neco se ulozilo " + item.getItemName());
             itemService.setItem(item, userId);
-            this.dashboard.setItems();
+            this.baseView.setItems();
         });       
         newItem.addClickListener(e -> {
             UserItem it = new UserItem();
             setItem(it);
-            this.dashboard.setItems();
+            this.baseView.setItems();
             //this.clear();
         });
         delete.addClickListener(e -> {
             this.itemService.delete(item, userId);
             setItem(new UserItem());
-            this.dashboard.setItems();
+            this.baseView.setItems();
         });
         //setItem(new UserItem());
     }
     
     public void setItem(UserItem selectedItem)
     {
+        System.out.println("Nastavuju novou polozku pro " + getUI().getSession().getAttribute("userId"));
         userId = (Long) getSession().getAttribute("userId");
         if(selectedItem == null)
         {
@@ -104,13 +110,16 @@ public class ItemForm extends FormLayout {
             System.err.println("Item is not found");
             this.item = selectedItem;
         }
+        this.categoryRepository.findByIdUser(userId).forEach(e -> {
+            this.category.addItem(e.getCatName());
+        });
         BeanFieldGroup.bindFieldsUnbuffered(item, this);
-        //this.dashboard.setItems();
+            
     }
     
-    public void setDashboard(Dashboard d)
+    public void setView(CustomView d)
     {
-        this.dashboard = d;
+        this.baseView = d;
     }
 }
     

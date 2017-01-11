@@ -23,6 +23,7 @@ public class UserItem {
     private Date purDate;
     private boolean isNeeded;
 
+    //default constructor for creating class, used for clear from
     public UserItem() {
         this.category = "default";
         this.currency = "CZK";
